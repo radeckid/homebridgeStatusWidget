@@ -1,5 +1,8 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
+// icon-color: purple; icon-glyph: home;
+// Variables used by Scriptable.
+// These must be at the very top of the file. Do not edit.
 // icon-color: blue; icon-glyph: magic;
 // Check the readme at https://github.com/lwitzani/homebridgeStatusWidget for setup instructions, troubleshoots and also for updates of course!
 // Code Version: 16.11.2022
@@ -7,30 +10,30 @@
 // For power users:
 // I added a configuration mechanism so you don't need to reconfigure it every time you update the script!
 // Please check the readme for instructions on how to use the persist mechanism for the configuration
-let configurationFileName = 'purple.json' // change this to an own name e.g. 'configBlack.json' . This name can then be given as a widget parameter in the form 'USE_CONFIG:yourfilename.json' so you don't loose your preferred configuration across script updates (but you will loose it if i have to change the configuration format)
+let configurationFileName = '.json' // change this to an own name e.g. 'configBlack.json' . This name can then be given as a widget parameter in the form 'USE_CONFIG:yourfilename.json' so you don't loose your preferred configuration across script updates (but you will loose it if i have to change the configuration format)
 const usePersistedConfiguration = true; // false would mean to use the visible configuration below; true means the state saved in iCloud (or locally) will be used
 const overwritePersistedConfig = false; // if you like your configuration, run the script ONCE with this param to true, then it is saved and can be used via 'USE_CONFIG:yourfilename.json' in widget params
 // *********
 
-const CONFIGURATION_JSON_VERSION = 3; // never change this! If i need to change the structure of configuration class, i will increase this counter. Your created config files sadly won't be compatible afterwards.
+const CONFIGURATION_JSON_VERSION = 6; // never change this! If i need to change the structure of configuration class, i will increase this counter. Your created config files sadly won't be compatible afterwards.
 // CONFIGURATION //////////////////////
 class Configuration {
     // you must at least configure the next 3 lines to make this script work or use credentials in parameter when setting up the widget (see the readme on github)
     // if you don't use credentials, just enter the URL and it should work
     // as soon as credentials + URL are correct, a configuration is saved and then used. to make changes after that set overwritePersistedConfig to true
-    hbServiceMachineBaseUrl = '>enter the ip with the port here<'; // location of your system running the hb-service, e.g. http://192.168.178.33:8581
-    userName = '>enter username here<'; // username of administrator of the hb-service
-    password = '>enter password here<'; // password of administrator of the hb-service
+    hbServiceMachineBaseUrl = 'http://192.168.1.172:8581'; // location of your system running the hb-service, e.g. http://192.168.178.33:8581
+    userName = 'homebridgeStatusWidget'; // username of administrator of the hb-service
+    password = 'homebridgeStatusWidget'; // password of administrator of the hb-service
     notificationEnabled = true; // set to false to disable all notifications
 
-    notificationIntervalInDays = 1; // minimum amount of days between the notification about the same topic; 0 means notification everytime the script is run (SPAM). 1 means you get 1 message per status category per day (maximum of 4 messages per day since there are 4 categories). Can also be something like 0.5 which means in a day you can get up to 8 messages
-    disableStateBackToNormalNotifications = true; // set to false, if you want to be notified e.g. when Homebridge is running again after it stopped
+    notificationIntervalInDays = 0; // minimum amount of days between the notification about the same topic; 0 means notification everytime the script is run (SPAM). 1 means you get 1 message per status category per day (maximum of 4 messages per day since there are 4 categories). Can also be something like 0.5 which means in a day you can get up to 8 messages
+    disableStateBackToNormalNotifications = false; // set to false, if you want to be notified e.g. when Homebridge is running again after it stopped
     fileManagerMode = 'ICLOUD'; // default is ICLOUD. If you don't use iCloud Drive use option LOCAL
     temperatureUnitConfig = 'CELSIUS'; // options are CELSIUS or FAHRENHEIT
-    requestTimeoutInterval = 3; // in seconds; If requests take longer, the script is stopped. Increase it if it doesn't work or you
+    requestTimeoutInterval = 20; // in seconds; If requests take longer, the script is stopped. Increase it if it doesn't work or you
     pluginsOrSwUpdatesToIgnore = []; // a string array; enter the exact npm-plugin-names e.g. 'homebridge-fritz' or additionally 'HOMEBRIDGE_UTD' or 'NODEJS_UTD' if you do not want to have them checked for their latest versions
     adaptToLightOrDarkMode = true; // if one of the purple or black options is chosen, the widget will adapt to dark/light mode if true
-    bgColorMode = 'PURPLE_LIGHT'; // default is PURPLE_LIGHT. Other options: PURPLE_DARK, BLACK_LIGHT, BLACK_DARK, CUSTOM (custom colors will be used, see below)
+    bgColorMode = 'BLACK_DARK'; // default is PURPLE_LIGHT. Other options: PURPLE_DARK, BLACK_LIGHT, BLACK_DARK, CUSTOM (custom colors will be used, see below)
     customBackgroundColor1_light = '#3e00fa'; // if bgColorMode CUSTOM is used a LinearGradient is created from customBackgroundColor1_light and customBackgroundColor2_light
     customBackgroundColor2_light = '#7a04d4'; // you can use your own colors here; they are saved in the configuration
     customBackgroundColor1_dark = '#3e00fa'; // if bgColorMode CUSTOM together with adaptToLightOrDarkMode = true is used, the light and dark custom values are used depending on the active mode
@@ -72,7 +75,7 @@ class Configuration {
     title_uptimes = 'Uptimes:';
 
     title_uiService = 'UI-Service: ';
-    title_systemGuiName = 'Raspberry Pi: '; // name of the system your service is running on
+    title_systemGuiName = 'RPi: '; // name of the system your service is running on
 
     notification_title = 'Homebridge Status changed:';
     notification_expandedButtonText = 'Show me!';
@@ -99,13 +102,13 @@ class Configuration {
     error_noConnectionText = '   ' + this.failIcon + ' UI-Service not reachable!\n          ' + this.bulletPointIcon + ' Server started?\n          ' + this.bulletPointIcon + ' UI-Service process started?\n          ' + this.bulletPointIcon + ' Server-URL ' + this.hbServiceMachineBaseUrl + ' correct?\n          ' + this.bulletPointIcon + ' Are you in the same network?';
     error_noConnectionLockScreenText = '  ' + this.failIcon + ' UI-Service not reachable!\n    ' + this.bulletPointIcon + ' Server started?\n    ' + this.bulletPointIcon + ' UI-Service process started?\n    ' + this.bulletPointIcon + ' ' + this.hbServiceMachineBaseUrl + ' correct?\n    ' + this.bulletPointIcon + ' Are you in the same network?';
 
-    widgetTitle = ' Homebridge ';
+    widgetTitle = 'Damrad Pi';
     dateFormat = 'dd.MM.yyyy HH:mm:ss'; // for US use 'MM/dd/yyyy HH:mm:ss';
     hbLogoFileName = Device.model() + 'hbLogo.png';
-    headerFontSize = 12;
-    informationFontSize = 10;
-    chartAxisFontSize = 7;
-    dateFontSize = 7;
+    headerFontSize = 15;
+    informationFontSize = 13;
+    chartAxisFontSize = 10;
+    dateFontSize = 10;
     notificationJsonFileName = 'notificationState.json'; // multiple scripts for different homebridge instances should point to a different notificationJsonFileName
 }
 
@@ -124,7 +127,7 @@ const nodeJsUrl = () => CONFIGURATION.hbServiceMachineBaseUrl + '/api/status/nod
 
 
 const timeFormatter = new DateFormatter();
-const maxLineWidth = 300; // if layout doesn't look good for you,
+const maxLineWidth = 310; // if layout doesn't look good for you,
 const normalLineHeight = 35; // try to tweak the (font-)sizes & remove/add spaces below
 let headerFont, infoFont, chartAxisFont, updatedAtFont, token, fileManager;
 
@@ -143,10 +146,10 @@ const NOTIFICATION_JSON_VERSION = 1; // never change this!
 
 const INITIAL_NOTIFICATION_STATE = {
     'jsonVersion': NOTIFICATION_JSON_VERSION,
-    'hbRunning': {'status': true},
-    'hbUtd': {'status': true},
-    'pluginsUtd': {'status': true},
-    'nodeUtd': {'status': true}
+    'hbRunning': { 'status': true },
+    'hbUtd': { 'status': true },
+    'pluginsUtd': { 'status': true },
+    'nodeUtd': { 'status': true }
 };
 
 class LineChart {
@@ -247,14 +250,14 @@ async function initializeFileManager_Configuration_TimeFormatter_Fonts_AndToken(
     fileManager = CONFIGURATION.fileManagerMode === 'LOCAL' ? FileManager.local() : FileManager.iCloud();
 
     if (args.widgetParameter) {
-// you can either provide as parameter:
-//  - the config.json file name you want to load the credentials from (must be created before it can be used but highly recommended)
-//      valid example: 'USE_CONFIG:yourfilename.json' (the 'yourfilename' part can be changed by you)
-//      this single parameter must start with USE_CONFIG: and end with .json
-// - credentials + URL directly (all other changes to the script are lost when you update it e.g. via https://scriptdu.de )
-//      credentials must be separated by two commas like <username>,,<password>,,<hbServiceMachineBaseUrl>
-//      a valid real example: admin,,mypassword123,,http://192.168.178.33:8581
-//      If no password is needed for you to login just enter anything: xyz,,xyz,,http://192.168.178.33:8581
+        // you can either provide as parameter:
+        //  - the config.json file name you want to load the credentials from (must be created before it can be used but highly recommended)
+        //      valid example: 'USE_CONFIG:yourfilename.json' (the 'yourfilename' part can be changed by you)
+        //      this single parameter must start with USE_CONFIG: and end with .json
+        // - credentials + URL directly (all other changes to the script are lost when you update it e.g. via https://scriptdu.de )
+        //      credentials must be separated by two commas like <username>,,<password>,,<hbServiceMachineBaseUrl>
+        //      a valid real example: admin,,mypassword123,,http://192.168.178.33:8581
+        //      If no password is needed for you to login just enter anything: xyz,,xyz,,http://192.168.178.33:8581
         if (args.widgetParameter.length > 0) {
             let foundCredentialsInParameter = useCredentialsFromWidgetParameter(args.widgetParameter);
             let fileNameSuccessfullySet = false;
@@ -262,7 +265,7 @@ async function initializeFileManager_Configuration_TimeFormatter_Fonts_AndToken(
                 fileNameSuccessfullySet = checkIfConfigFileParameterIsProvided(args.widgetParameter);
             }
             if (!foundCredentialsInParameter && !fileNameSuccessfullySet) {
-                throw('Format of provided parameter not valid\n2 Valid examples: 1. USE_CONFIG:yourfilename.json\n2. admin,,mypassword123,,http://192.168.178.33:8581');
+                throw ('Format of provided parameter not valid\n2 Valid examples: 1. USE_CONFIG:yourfilename.json\n2. admin,,mypassword123,,http://192.168.178.33:8581');
             }
         }
     }
@@ -310,7 +313,6 @@ async function handleConfigPersisting() {
 }
 
 function buildStatusPanelInHeader(titleStack, homeBridgeStatus) {
-    titleStack.addSpacer(CONFIGURATION.spacer_beforeFirstStatusColumn);
     let statusInfo = titleStack.addStack();
     let firstColumn = statusInfo.addStack();
     firstColumn.layoutVertically();
@@ -325,8 +327,6 @@ function buildStatusPanelInHeader(titleStack, homeBridgeStatus) {
     addStatusInfo(secondColumn, homeBridgeStatus.hbUpToDate, CONFIGURATION.status_hbUtd);
     secondColumn.addSpacer(verticalSpacerInfoPanel);
     addStatusInfo(secondColumn, homeBridgeStatus.nodeJsUpToDate, CONFIGURATION.status_nodejsUtd);
-
-    titleStack.addSpacer(CONFIGURATION.spacer_afterSecondColumn);
 }
 
 async function showNotAvailableWidget() {
@@ -362,18 +362,22 @@ async function initializeToken() {
     // authenticate against the hb-service
     token = await getAuthToken();
     if (token === undefined) {
-        throw('Credentials not valid');
+        throw ('Credentials not valid');
     }
 }
 
 async function initializeLogoAndHeader(titleStack) {
     titleStack.size = new Size(maxLineWidth, normalLineHeight);
+    titleStack.centerAlignContent();
     const logo = await getHbLogo();
     const imgWidget = titleStack.addImage(logo);
-    imgWidget.imageSize = new Size(40, 30);
+    imgWidget.imageSize = new Size(normalLineHeight, normalLineHeight);
+
+    titleStack.addSpacer(4);
 
     let headerText = addStyledText(titleStack, CONFIGURATION.widgetTitle, headerFont);
     headerText.size = new Size(60, normalLineHeight);
+    titleStack.addSpacer();
 }
 
 function initializeFonts() {
@@ -433,6 +437,16 @@ function speakUpdateStatus(updateAvailable) {
     }
 }
 
+//DEBUG BORDER START
+function setDebugBorder(widget) {
+    // let randomColor = new Color(
+    //     `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}`
+    // );
+    // widget.borderColor = randomColor;
+    // widget.borderWidth = 1;
+}
+//DEBUG BORDER END
+
 async function buildUsualGui(widget, homeBridgeStatus) {
     widget.addSpacer(10);
     let titleStack = widget.addStack();
@@ -445,29 +459,31 @@ async function buildUsualGui(widget, homeBridgeStatus) {
     let uptimesArray = await getUptimesArray();
     if (cpuData && ramData) {
         let mainColumns = widget.addStack();
+        mainColumns.addSpacer(2);
         mainColumns.size = new Size(maxLineWidth, 77);
-        mainColumns.addSpacer(4)
 
         let cpuColumn = mainColumns.addStack();
         cpuColumn.layoutVertically();
         addStyledText(cpuColumn, CONFIGURATION.title_cpuLoad + getAsRoundedString(cpuData.currentLoad, 1) + '%', infoFont);
         addChartToWidget(cpuColumn, cpuData.cpuLoadHistory);
-        cpuColumn.addSpacer(7);
+        cpuColumn.addSpacer();
 
         let temperatureString = getTemperatureString(cpuData?.cpuTemperature.main);
         if (temperatureString) {
             let cpuTempText = addStyledText(cpuColumn, CONFIGURATION.title_cpuTemp + temperatureString, infoFont);
-            cpuTempText.size = new Size(150, 30);
+            cpuTempText.size = new Size(maxLineWidth / 2, 40);
             setTextColor(cpuTempText);
         }
 
-        mainColumns.addSpacer(11);
+        mainColumns.addSpacer();
 
         let ramColumn = mainColumns.addStack();
         ramColumn.layoutVertically();
         addStyledText(ramColumn, CONFIGURATION.title_ramUsage + usedRamText + '%', infoFont);
         addChartToWidget(ramColumn, ramData.memoryUsageHistory);
         ramColumn.addSpacer(7);
+
+        mainColumns.addSpacer(2);
 
         if (uptimesArray) {
             let uptimesStack = ramColumn.addStack();
@@ -485,8 +501,15 @@ async function buildUsualGui(widget, homeBridgeStatus) {
         widget.addSpacer(10);
 
         // BOTTOM UPDATED TEXT //////////////////////
-        let updatedAt = addStyledText(widget, 't: ' + timeFormatter.string(new Date()), updatedAtFont);
+        let updatedAt = addStyledText(widget, timeFormatter.string(new Date()), updatedAtFont);
+
         updatedAt.centerAlignText();
+
+        setDebugBorder(titleStack);
+        setDebugBorder(mainColumns);
+        setDebugBorder(cpuColumn);
+        setDebugBorder(ramColumn);
+        setDebugBorder(widget);
     }
 }
 
@@ -555,7 +578,7 @@ async function buildCpuRamInfoForLockScreen(verticalStack) {
     addStyledText(ramSecondColumn, usedRamText + '%', infoFont);
     ramSecondColumn.addSpacer(5);
 
-    addStyledText(ramSecondColumn, '  t: ' + timeFormatter.string(new Date()), updatedAtFont);
+    addStyledText(ramSecondColumn, '   ' + timeFormatter.string(new Date()), updatedAtFont);
 }
 
 function addUpdatableElement(stackToAdd, elementTitle, versionCurrent, versionLatest) {
@@ -674,10 +697,10 @@ function addChartToWidget(column, chartData) {
     vertChartImageStack.layoutVertically();
 
     let chartImageHandle = vertChartImageStack.addImage(chartImage);
-    chartImageHandle.imageSize = new Size(100, 25);
+    chartImageHandle.imageSize = new Size(120, 25);
 
     let xAxisStack = vertChartImageStack.addStack();
-    xAxisStack.size = new Size(100, 10);
+    xAxisStack.size = new Size(120, 10);
 
     addStyledText(xAxisStack, 't-10m', chartAxisFont);
     xAxisStack.addSpacer(75);
@@ -688,7 +711,7 @@ function checkIfConfigFileParameterIsProvided(givenParameter) {
     if (givenParameter.trim().startsWith('USE_CONFIG:') && givenParameter.trim().endsWith('.json')) {
         configurationFileName = givenParameter.trim().split('USE_CONFIG:')[1];
         if (!fileManager.fileExists(getFilePath(configurationFileName))) {
-            throw('Config file with provided name ' + configurationFileName + ' does not exist!\nCreate it first by running the script once providing the name in variable configurationFileName and maybe with variable overwritePersistedConfig set to true');
+            throw ('Config file with provided name ' + configurationFileName + ' does not exist!\nCreate it first by running the script once providing the name in variable configurationFileName and maybe with variable overwritePersistedConfig set to true');
         }
         return true;
     }
@@ -711,7 +734,7 @@ function useCredentialsFromWidgetParameter(givenParameter) {
 
 async function getAuthToken() {
     if (CONFIGURATION.hbServiceMachineBaseUrl === '>enter the ip with the port here<') {
-        throw('Base URL to machine not entered! Edit variable called hbServiceMachineBaseUrl')
+        throw ('Base URL to machine not entered! Edit variable called hbServiceMachineBaseUrl')
     }
     let req = new Request(noAuthUrl());
     req.timeoutInterval = CONFIGURATION.requestTimeoutInterval;
@@ -778,7 +801,7 @@ async function getOverallStatus() {
 async function getHomebridgeVersionInfos() {
     if (CONFIGURATION.pluginsOrSwUpdatesToIgnore.includes('HOMEBRIDGE_UTD')) {
         log('You configured Homebridge to not be checked for updates. Widget will show that it\'s UTD!');
-        return {updateAvailable: false};
+        return { updateAvailable: false };
     }
     const hbVersionData = await fetchData(hbVersionUrl());
     if (hbVersionData === undefined) {
@@ -790,7 +813,7 @@ async function getHomebridgeVersionInfos() {
 async function getNodeJsVersionInfos() {
     if (CONFIGURATION.pluginsOrSwUpdatesToIgnore.includes('NODEJS_UTD')) {
         log('You configured Node.js to not be checked for updates. Widget will show that it\'s UTD!');
-        return {updateAvailable: false};
+        return { updateAvailable: false };
     }
     const nodeJsData = await fetchData(nodeJsUrl());
     if (nodeJsData === undefined) {
@@ -811,10 +834,10 @@ async function getPluginVersionInfos() {
             continue;
         }
         if (plugin.updateAvailable) {
-            return {plugins: pluginsData, updateAvailable: true};
+            return { plugins: pluginsData, updateAvailable: true };
         }
     }
-    return {plugins: pluginsData, updateAvailable: false};
+    return { plugins: pluginsData, updateAvailable: false };
 }
 
 function getUsedRamString(ramData) {
@@ -885,7 +908,7 @@ function addNotAvailableInfos(widget, titleStack) {
 
 
     widget.addSpacer(15);
-    let updatedAt = widget.addText('t: ' + timeFormatter.string(new Date()));
+    let updatedAt = widget.addText(timeFormatter.string(new Date()));
     updatedAt.font = updatedAtFont;
     setTextColor(updatedAt);
     updatedAt.centerAlignText();
@@ -1057,7 +1080,7 @@ async function getPersistedObject(path, versionToCheckAgainst, initialObjectToPe
             log('Unfortunately, the configuration structure changed and your old config is not compatible anymore. It is now renamed, marked as deprecated and a new one is created with the initial configuration. ')
             persistObject(persistedObject, getFilePath('DEPRECATED_' + configurationFileName));
             fileManager.remove(path);
-            let migratedConfig = {...initialObjectToPersist, ...persistedObject};
+            let migratedConfig = { ...initialObjectToPersist, ...persistedObject };
             migratedConfig.jsonVersion = CONFIGURATION_JSON_VERSION;
             persistObject(migratedConfig, path);
             return migratedConfig;
